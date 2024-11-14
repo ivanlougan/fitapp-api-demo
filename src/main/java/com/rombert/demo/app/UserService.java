@@ -1,6 +1,8 @@
 package com.rombert.demo.app;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +24,28 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
-    // other CRUD operations
+    public UserEntity updateUser(Long userId, String email, String user_name) {
+
+        Optional<UserEntity> existingUser = userRepository.findById(userId);
+
+        if(existingUser.isPresent()) {
+            UserEntity user = existingUser.get();
+            user.setEmail(email);
+            user.setUsername(user_name);
+            return userRepository.save(user);
+        } else {
+            throw new UserNotFoundException("User with id " + userId + " not found.");
+        }
+    }
+
+    public void deleteUser(Long userId) {
+
+        Optional<UserEntity> existingUser = userRepository.findById(userId);
+
+        if (existingUser.isPresent()) {
+            userRepository.deleteById(userId);
+        } else {
+            throw new UserNotFoundException("User with id " + userId + " not found.");
+        }
+    }
 }
